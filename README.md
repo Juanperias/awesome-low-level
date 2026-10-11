@@ -640,6 +640,9 @@ You'll commonly work with Linux, Windows internals, C, C++, Python, Rust, and sc
 > The tech stack often includes tools like Wireshark, Nmap, Burp Suite, Metasploit, Ghidra, IDA Pro, Sysinternals, John the Ripper, Hashcat, and different SIEM platforms. You'll also learn about protocols like TCP/IP, DNS, HTTP/HTTPS, and TLS, along with how attackers and defenders interact with modern computer systems.
 
 - **[Pwn College](https://pwn.college/)**
+- **[SEED Labs](https://seedsecuritylabs.org/)**
+- **[ROP Emporium](https://ropemporium.com/)**
+- **[OpenSecurityTraining2](https://opensecuritytraining.info/)**
 - **[Awesome Infosec](https://github.com/onlurking/awesome-infosec)**
 - **[Awesome List](https://github.com/0xor0ne/awesome-list)**
 
@@ -665,6 +668,8 @@ A collection of creators who cover topics related to low-level programming.
 - **[Low Level Game Dev](https://www.youtube.com/@lowlevelgamedev9330)**
 - **[Core Dumped](https://youtube.com/@coredumpped)**
 - **[Dave's Garage](https://www.youtube.com/@DavesGarage)**
+- **[Low Level](https://www.youtube.com/@LowLevelTV)**
+- **[LiveOverflow](https://www.youtube.com/@LiveOverflow)**
 
 ---
 
