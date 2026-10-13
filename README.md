@@ -667,6 +667,7 @@ A collection of creators who cover topics related to low-level programming.
 - **[TechExplained](https://www.youtube.com/@TechsExplained)**
 - **[Low Level Game Dev](https://www.youtube.com/@lowlevelgamedev9330)**
 - **[Core Dumped](https://youtube.com/@coredumpped)**
+- **[Kay Lack](https://www.youtube.com/@neoeno4242)**
 - **[Dave's Garage](https://www.youtube.com/@DavesGarage)**
 - **[Low Level](https://www.youtube.com/@LowLevelTV)**
 - **[LiveOverflow](https://www.youtube.com/@LiveOverflow)**
