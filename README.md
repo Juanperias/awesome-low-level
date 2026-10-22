@@ -679,7 +679,7 @@ A collection of creators who cover topics related to low-level programming.
 Join our Discord server if you need help, want to learn low-level programming, or would like to contribute to the megathread.
 
   <a href="https://discord.gg/YZRknMKn2K">
-    <img width="200" alt="photo_6145283918186353599_y" src="https://github.com/user-attachments/assets/692b8958-4ec9-4b55-bbde-814364832231" />
+   <img width="200" alt="Nira" src="https://github.com/user-attachments/assets/ceb562e0-5434-4773-ba6f-386d53b83e63" />
   </a>
 
 ---
