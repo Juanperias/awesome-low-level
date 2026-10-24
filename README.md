@@ -379,7 +379,7 @@ How much assembly you need depends on where you end up. Some fields, like game e
 
 > Assembly is not portable. Every ISA has its own instructions, registers, and conventions, and even on the same ISA the calling convention can change between operating systems (System V on Linux versus Microsoft x64 on Windows, for example). Pick one to start with instead of trying to learn them all at once. The core ideas carry over, which makes the second one much easier.
 
-Learn the basics here first, then once you reach C a couple of steps later, come back and write small C programs and compare them with the assembly the compiler produces. Compiling with `gcc -S` gives you the assembly directly, and Compiler Explorer shows it side by side with your code. Start with `-O0`, where the output follows your source closely, then try `-O2` and see what the optimizer does to it. Change the code a bit, watch how the output changes, and ask yourself why. After a while you'll have a pretty good idea of what the compiler does for you behind the scenes.
+Learn the basics here first, then once you reach C a couple of steps later, come back and write small C programs and compare them with the assembly the compiler produces. Compiling with `gcc -S` gives you the assembly directly, and Compiler Explorer shows it side by side with your code. Change the code a bit, watch how the output changes, and ask yourself why. After a while you'll have a pretty good idea of what the compiler does for you behind the scenes.
 
 - **[Compiler Explorer](https://godbolt.org/)**
 
