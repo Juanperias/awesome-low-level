@@ -26,12 +26,12 @@ A curated collection of resources for learning low-level programming from the gr
 - [Let's Gooo!](#lets-gooo-)
 - [Roadmap](#roadmap)
   - [1. Basic Electronics](#1-basic-electronics)
-  - [2. Computer Fundamentals](#2-computer-fundamentals)
-  - [3. C Programming](#3-c-programming)
-  - [4. Assembly](#4-assembly)
+  - [2. Assembly](#2-assembly)
     - [x86-64](#x86-64)
     - [ARM](#arm)
     - [RISC-V](#risc-v)
+  - [3. Computer Fundamentals](#3-computer-fundamentals)
+  - [4. C Programming](#4-c-programming)
   - [5. Practice Data Structures & Algorithms](#5-practice-data-structures--algorithms)
   - [6. Build Small Projects](#6-build-small-projects)
   - [7. Learn Modern Low-Level Languages (Optional)](#7-learn-modern-low-level-languages-optional)
@@ -125,7 +125,7 @@ for (int i = 0; i < 5; i++) {
 free(ages);
 ```
 
-> **How the code works:** `malloc()` asks for enough memory to hold 5 `int` values, and `ages` stores the address of that memory. The first `for` loop fills it, the second one reads the values back and checks the condition, and `free(ages)` finally hands the memory back.
+> **How the code works:** `malloc()` requests `5 * sizeof(int)` bytes from the heap and returns a pointer to the start of that block, which `ages` stores. The memory comes back uninitialized, so the first `for` loop fills it and the second one reads the values back and checks the condition. `free(ages)` returns the block to the allocator. A real program should also check that `malloc()` didn't return `NULL`, and it must never touch `ages` again after the `free()`.
 
 You don't have to relearn everything from scratch, though. Just focus on the C concepts and computer fundamentals you haven't seen yet, then follow the roadmap and build things up step by step.
 
@@ -209,7 +209,7 @@ int main(void) {
 }
 ```
 
-> **Why is C written this way ?** C has no classes or methods like Java does. It gives you `struct` to group data and plain functions to define behavior, so the data and the functions live separately and you pass the data into the function yourself when you want it to work on that data.
+> **Why is C written this way ?** C has no classes or methods. A `struct` groups data, and behavior lives in plain functions that are kept separate from that data. Notice that `take_damage` receives `&player`, the address of the struct. C passes arguments by value, so without the pointer the function would only get a copy, and the original `health` would stay untouched.
 
 This gives you more control over how data is stored, accessed, and changed. Instead of piling up layers of abstraction, you can see exactly what gets passed around, where it lives in memory, and how the different parts of your program touch it.
 
@@ -261,7 +261,7 @@ Try not to ask it to write the entire program or solve the problem from start to
   <img width="4139" alt="Untitled-2026-08-25-2028" src="https://github.com/user-attachments/assets/8c9d045b-edb1-46d5-91dd-558e0dd53737" />
 </p>
 
-The diagram shows the layers between the programmer and the hardware. At the very bottom sits the hardware itself, the physical parts that run instructions and do the actual computation. Above it you have [machine code](https://en.wikipedia.org/wiki/Machine_code), [assembly](https://en.wikipedia.org/wiki/Assembly_language), and then programming languages. The higher you go, the more hardware detail gets hidden behind abstractions, which makes programming easier but also takes away some of your control over what's happening underneath.
+The diagram shows the layers between the programmer and the hardware. At the very bottom sits the hardware itself, the physical circuits that execute instructions. Above it is [machine code](https://en.wikipedia.org/wiki/Machine_code), the binary encoding of the instructions defined by the CPU's instruction set architecture (ISA). Then comes [assembly](https://en.wikipedia.org/wiki/Assembly_language), a readable text form of those same instructions, and above that the programming languages, which compilers or interpreters eventually translate down into machine code. The higher you go, the more hardware detail gets hidden behind abstractions, which makes programming easier but also takes away some of your control over what's happening underneath.
 
 [Low-level programming](https://en.wikipedia.org/wiki/Low-level_programming_language) means working closer to the machine and understanding what really goes on across these layers. Instead of leaning on abstractions, you deal more directly with [memory](https://en.wikipedia.org/wiki/Computer_memory), the [CPU](https://en.wikipedia.org/wiki/Central_processing_unit), and other hardware resources.
 
@@ -283,6 +283,8 @@ Since many system-level programs need direct hardware access and careful resourc
 
 > A simple way to remember it: low-level programming describes how close your code is to the hardware, while systems programming describes what kind of software you're building.
 
+> **What this wiki focuses on:** The area where the two overlap, which is **low-level systems programming**. Think operating systems, compilers, runtimes, and the other software that sits right on top of the hardware and keeps everything else running. [Bare metal programming](https://en.wikipedia.org/wiki/Bare_machine) is low-level too. Your code runs directly on the hardware with no operating system underneath, which usually means firmware for a microcontroller: startup code, linker scripts, and talking to peripherals through memory-mapped registers. It's a path of its own, and we're not going to focus on it here. From this point on, whenever you see the words "low-level" in this wiki, read them as low-level systems programming.
+
 - **[What is Systems Programming, Really ?](https://willcrichton.net/notes/systems-programming/):** A beginner-friendly article on what systems programming actually means and how it differs from low-level programming.
 
 ---
@@ -294,7 +296,8 @@ If you're interested in low-level programming, [C](https://en.wikipedia.org/wiki
 A few reasons C still matters:
  
 - **C runs almost everywhere**. Tiny microcontrollers, embedded devices, desktop apps, servers, operating systems, you name it. You'll find C on nearly every kind of computer.
-- **C is efficient and lightweight**. You can write software that uses very little memory and processing power, which is great for performance-critical and resource-limited systems.
+- **C is efficient and lightweight**. It maps closely to what the machine actually does and has a tiny runtime, with no garbage collector and no hidden allocations. That makes it easy to predict roughly what code the compiler will generate and how much memory your program uses, which is exactly what you want in performance-critical and resource-limited systems.
+- **C has a simple, stable ABI**. Almost every other language can call into C libraries, which is why so many libraries and system interfaces, including the system calls of most operating systems, are exposed as C APIs.
 - **C is flexible**. It doesn't force a particular style or paradigm on you, so you can structure your program in whatever way fits the problem.
 - **C puts very few restrictions on style**. It doesn't push any ideology, and as a result there are very few kinds of programs that can't be written in it.
 - **A huge amount of software is built on C**. Many programming languages, operating systems, databases, compilers, and developer tools are written in C or heavily influenced by it. Even Python, Ruby, PHP, and Perl run on implementations that are mostly written in C or C++.
@@ -315,13 +318,13 @@ C is also valuable because of how much it influenced everything else. Many moder
 
 Stroustrup explains that modern C and modern C++ are better seen as [sibling languages](https://www.stroustrup.com/siblings_short.pdf#:~:text=C%2B%2B%20is%20a%20descendant%20of%20K%26R%20C.,%2B%20%2B%209%208%20C%208%209) than as one being the newer version of the other. They share a common ancestor in K&R C, but they've grown in different directions since.
 
-This matters because C++ never simply adopted modern C versions like C99 or C11. The two still share a lot of concepts and history, but they've developed separately, which is why modern C and modern C++ can behave quite differently even when the code looks almost identical.
+This matters because C++ never simply adopted modern C versions like C99 or C11. The two still share a lot of concepts and history, but they've developed separately, which is why modern C and modern C++ can behave quite differently even when the code looks almost identical. A classic example is `int *p = malloc(n);`, which is perfectly fine in C but an error in C++, where `void *` doesn't convert to other pointer types implicitly and you need an explicit cast.
 
 Seeing them as siblings also helps when you're deciding which one to learn. You'll often hear "learn C before C++," especially for low-level work, and the reasoning is that C shows you much more of what's happening under the hood.
 
 C has relatively few abstractions, so you're pushed to understand memory, pointers, strings, and data representation instead of letting language features handle them for you. That makes it a good way to learn how programs really work.
 
-C++ gives you many more abstractions and tools, which make development easier. Classes, templates, and the standard library let you build bigger and more complex software without writing everything yourself. The catch is that you can use all of it without fully understanding what's going on underneath.
+C++ gives you many more abstractions and tools, which make development easier. Classes, templates, RAII, and the standard library let you build bigger and more complex software without writing everything yourself. The catch is that you can use all of it without fully understanding what's going on underneath.
 
 That doesn't make C++ automatically high-level, though. One of its strengths is that you choose how much abstraction to use. You can write code that's very close to C when you need direct control, or reach for higher-level features when they make sense.
 
@@ -339,7 +342,7 @@ Starting with C and moving to C++ later works too. Learning C first can make it 
 
 ## Let's Gooo !
  
-Now that you have a rough idea of what low-level programming is, it's time to start learning. We're not going to jump straight into assembly or build an operating system on day one. First we build a foundation, learn how computers work, and slowly move closer to the hardware.
+Now that you have a rough idea of what low-level programming is, it's time to start learning. We're not going to start with building an operating system on day one. We begin with a little electronics, take a first look at assembly, then cover the computer fundamentals, and slowly work our way up from there.
 
 Take your time with the roadmap. Low-level programming is a broad field, and it's normal for some topics to take longer than others. Focus on actually understanding the fundamentals instead of rushing through them.
 
@@ -361,63 +364,39 @@ Depending on the topic, some sections put a book before the official website, wh
  
 You don't need deep knowledge of electronics before learning C or low-level programming. A basic understanding is more than enough.
 
-Nobody expects you to become an electrical engineer here. A few core ideas, like voltage, [logic gates](https://en.wikipedia.org/wiki/Logic_gate), and simple [digital circuits](https://en.wikipedia.org/wiki/Electronic_circuit#Digital_circuits), will help you see how computers work at the hardware level, and they make it much easier to understand what the machine is really doing underneath.
+Nobody expects you to become an electrical engineer here. Get comfortable with voltage and current, [logic gates](https://en.wikipedia.org/wiki/Logic_gate), and how gates combine into [digital circuits](https://en.wikipedia.org/wiki/Electronic_circuit#Digital_circuits). It also helps to understand the difference between combinational circuits, where the output depends only on the current inputs (an adder, for example), and sequential circuits, which hold state in flip-flops and change on a clock signal. Registers and memory are built from the second kind, and a CPU is essentially both kinds wired together, which makes it much easier to see what the machine is really doing underneath.
 
 - **[MIT OpenCourseWare: Circuits & Electronics](https://ocw.mit.edu/courses/6-002-circuits-and-electronics-spring-2007/)** 
 - **[Nand2Tetris](https://www.nand2tetris.org/)**
 
-## 2. Computer Fundamentals
- 
-Once you know a bit about the hardware side, start building a strong base in computer fundamentals. This is one of the most important parts of the roadmap, since a lot of low-level concepts are built on top of it.
+## 2. Assembly
 
-Learn how computers store information, how the CPU runs instructions, how memory is organized, and how software works with hardware. The deeper you go, the more things like binary, [microarchitecture](https://en.wikipedia.org/wiki/Microarchitecture), [ISA](https://en.wikipedia.org/wiki/Instruction_set_architecture), memory, storage, [registers](https://en.wikipedia.org/wiki/Processor_register), [caches](https://en.wikipedia.org/wiki/Cache_(computing)), and instruction execution will matter.
+Once you've seen how gates and circuits work, the next question is how a CPU gets told what to do with them. [Assembly](https://en.wikipedia.org/wiki/Assembly_language) is the answer. Every CPU family defines an instruction set architecture (ISA), which is the set of instructions, registers, and memory rules that software can use, and [machine code](https://en.wikipedia.org/wiki/Machine_code) is the binary encoding of those instructions. Assembly is the readable text form of that encoding. Most assembly instructions map one to one to a machine instruction, although an assembler also gives you labels, directives, macros, and sometimes pseudo-instructions that expand into real ones. Either way, there's very little standing between you and the hardware.
 
-> The better you understand how a computer works inside, the easier it is to see what happens when your code runs. Plenty of confusing low-level concepts start making sense once these fundamentals are in place.
+You won't be writing big programs in assembly. What you want is to be able to read it, understand it, and write small programs of your own. Focus on registers, the instruction set, [addressing modes](https://en.wikipedia.org/wiki/Addressing_mode), condition flags and jumps, the stack, [calling conventions](https://en.wikipedia.org/wiki/Calling_convention), and system calls. The calling convention is part of the ABI, and it decides which registers carry arguments and return values, which registers a function has to preserve, and how the stack is laid out, which is what lets separately compiled code work together. Some of this will feel abstract on a first pass. Computer fundamentals and C come right after this, and they'll fill in a lot of the gaps.
 
-- **[Exploring How Computers Work](https://www.youtube.com/watch?v=QZwneRb-zqA)**
-- **[Computer Systems: A Programmer's Perspective](https://www.amazon.com/dp/9332573905/)**
-- **[The Hidden Language of Computer Hardware and Software](https://charlespetzold.com/code/)**
-- **[Operating Systems: Three Easy Pieces](https://pages.cs.wisc.edu/~remzi/OSTEP/)**
- 
-## 3. C Programming
+How much assembly you need depends on where you end up. Some fields, like game engines, graphics, or network programming, don't ask for heavy assembly knowledge to get started, and you can get pretty far reading it only when you're debugging or chasing performance. Low-level systems programming as a whole is a different story. Assembly is part of the territory there: a kernel's bootloader, context switching, and interrupt entry code can only be written in it, compilers generate it, and tracking down a nasty crash or a security bug often means reading it. Since that's what this wiki is about, it comes early in the roadmap.
 
-<img width="150" alt="c_512x512" src="https://github.com/user-attachments/assets/4b52552b-d591-4bf8-9d59-64f2e86d61cc" />
- 
-Once you understand the basics of how computers work, it's time to learn C. As you go, pay attention to pointers, arrays, structs, memory allocation, stack and heap memory, data representation, and bitwise operations, since these topics are the foundation for low-level programming.
+> **Why isn't this part of Computer Fundamentals ?** Computer fundamentals covers the ideas: how data is represented, how a CPU fetches, decodes, and executes instructions, how memory is organized. Those ideas hold on every machine, and you mostly pick them up by reading and thinking. Assembly is a hands-on skill tied to one specific ISA, with its own syntax, its own tooling (an assembler, a linker, a debugger like GDB), and its own conventions. x86-64, ARM, and RISC-V differ enough in design and conventions that each one needs its own resources, and that doesn't fit inside a fundamentals section.
 
-Try to look past what your code does and ask how it actually works. Where is the data stored ? What happens in memory when a function is called ? How does the program read and change data? Thinking this way gets you far more out of C than just memorizing the syntax.
+> Assembly is not portable. Every ISA has its own instructions, registers, and conventions, and even on the same ISA the calling convention can change between operating systems (System V on Linux versus Microsoft x64 on Windows, for example). Pick one to start with instead of trying to learn them all at once. The core ideas carry over, which makes the second one much easier.
 
-- **[All Resources of C Language](https://www.c-language.org/resources)**
-- **[Beej's Guide to C Programming](https://beej.us/guide/bgc/)**
-- **[C FAQ](https://c-faq.com/)**
-- **[Dive into Systems](https://diveintosystems.org/book/)**
-- **[C Interfaces and Implementations](https://github.com/drh/cii)**
-
-## 4. Assembly
-
-Once you're comfortable writing programs in C, it's worth looking at what sits underneath. [Assembly](https://en.wikipedia.org/wiki/Assembly_language) is the human-readable form of [machine code](https://en.wikipedia.org/wiki/Machine_code), the instructions your CPU actually runs. Almost every assembly instruction maps to exactly one machine instruction, so there's very little standing between you and the hardware.
-
-You won't be writing big programs in assembly. What you want is to be able to read it, understand it, and write small programs of your own. Pay attention to registers, instructions, [addressing modes](https://en.wikipedia.org/wiki/Addressing_mode), jumps and flags, the stack, [calling conventions](https://en.wikipedia.org/wiki/Calling_convention), and system calls. Most of all, look at how the C code you already know turns into assembly. Pointers, arrays, loops, and function calls make a lot more sense once you see what they become.
-
-> Assembly is not portable. Every CPU family has its own instruction set, so pick one to start with instead of trying to learn them all at once. The core ideas carry over, which makes the second one much easier.
-
-A good way to learn is to write small C programs and compare them with the assembly the compiler produces. Change the code a bit, see how the output changes, and ask yourself why. After a while you'll have a pretty good idea of what the compiler does for you behind the scenes.
+Learn the basics here first, then once you reach C a couple of steps later, come back and write small C programs and compare them with the assembly the compiler produces. Compiling with `gcc -S` gives you the assembly directly, and Compiler Explorer shows it side by side with your code. Start with `-O0`, where the output follows your source closely, then try `-O2` and see what the optimizer does to it. Change the code a bit, watch how the output changes, and ask yourself why. After a while you'll have a pretty good idea of what the compiler does for you behind the scenes.
 
 - **[Compiler Explorer](https://godbolt.org/)**
 
 ### x86-64
 
-x86-64 is what runs inside most desktops, laptops, and servers. It's the most common place to start since you probably already own a machine with it, and there's a huge pile of tutorials, books, and tools to go with it. The instruction set is big and carries a lot of history, so it can look messy at first, but you only need a small part of it to get going.
+x86-64 is the 64-bit extension of the x86 line that goes all the way back to the 8086, and it's what runs inside most desktops, laptops, and servers. It's the most common place to start since you probably already own a machine with it, and there's a huge pile of tutorials, books, and tools to go with it. It's a CISC design with variable-length instructions (1 to 15 bytes) and decades of backward compatibility, which is why it can look messy at first. You only need a small part of it to get going. Also keep in mind that there are two assembly syntaxes, Intel and AT&T. The manuals use Intel, while GNU tools default to AT&T unless you switch them, so check which one a resource is using.
 
 - **[Intel Software Developer Manuals](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)**
 - **[x86-64 Assembly Language Programming with Ubuntu](https://www.egr.unlv.edu/~ed/x86.html)**
 - **[x86 and amd64 Instruction Reference](https://www.felixcloutier.com/x86/)**
 - **[Programming from the Ground Up](https://savannah.nongnu.org/projects/pgubook/)**
 
-
 ### ARM
 
-ARM powers almost every phone and tablet, Apple Silicon Macs, the Raspberry Pi, and most microcontrollers. It's a good pick if you own one of those devices or you're leaning toward embedded systems. ARM is also fairly clean and regular, and many beginners find it easier to read than x86.
+ARM powers almost every phone and tablet, Apple Silicon Macs, the Raspberry Pi, and most microcontrollers. It's a good pick if you own one of those devices or you're leaning toward embedded systems. ARM is a RISC design with a load/store architecture, meaning arithmetic works on registers only and separate load and store instructions move data to and from memory. AArch64 also uses fixed-width 32-bit instructions and has 31 general-purpose registers, which makes it fairly clean and regular, and many beginners find it easier to read than x86.
 
 > ARM comes in more than one flavor. 64-bit ARM (AArch64) is what you find in phones, Macs, and servers, while 32-bit ARM, especially Cortex-M with the Thumb instruction set, is common on microcontrollers. Check which one a resource teaches before you dive in.
 
@@ -426,11 +405,38 @@ ARM powers almost every phone and tablet, Apple Silicon Macs, the Raspberry Pi, 
 
 ### RISC-V
 
-RISC-V is a newer, open instruction set that anyone can use for free. Its design is small and clean, which makes it very pleasant to learn from, and it's growing fast in embedded systems, research, and education. If you want to understand how an instruction set is designed in the first place, RISC-V is a great one to study.
+RISC-V is an open instruction set that anyone can implement without paying license fees. It's also a RISC, load/store design, but it's built as a small base plus optional extensions. The base integer ISA (RV32I or RV64I) is tiny, and extensions add things like multiplication and division (M), atomics (A), floating point (F and D), and compressed instructions (C). That modularity is a big part of why it's so pleasant to learn from, and why it shows up in everything from microcontrollers to research CPUs. If you want to understand how an instruction set is designed in the first place, RISC-V is a great one to study.
 
 > You don't need a RISC-V board to start. Simulators and emulators like QEMU let you run RISC-V programs on your normal computer.
 
 - **[RISCV Learn](https://github.com/riscv/learn)**
+
+## 3. Computer Fundamentals
+ 
+With some electronics and assembly behind you, start building a strong base in computer fundamentals. This is one of the most important parts of the roadmap, since a lot of low-level concepts are built on top of it. You've already bumped into things like registers and the ISA in the assembly section, so this is where you learn why they work the way they do.
+
+Learn how data is represented (two's complement for signed integers, IEEE 754 for floating point, endianness, alignment), how the CPU fetches, decodes, and executes instructions, and how memory is organized, from registers and [caches](https://en.wikipedia.org/wiki/Cache_(computing)) down to RAM, storage, and virtual memory. The deeper you go, the more things like binary, [microarchitecture](https://en.wikipedia.org/wiki/Microarchitecture), [ISA](https://en.wikipedia.org/wiki/Instruction_set_architecture), [registers](https://en.wikipedia.org/wiki/Processor_register), and instruction execution will matter.
+
+> The better you understand how a computer works inside, the easier it is to see what happens when your code runs. Plenty of confusing low-level concepts start making sense once these fundamentals are in place.
+
+- **[Exploring How Computers Work](https://www.youtube.com/watch?v=QZwneRb-zqA)**
+- **[Computer Systems: A Programmer's Perspective](https://www.amazon.com/dp/9332573905/)**
+- **[The Hidden Language of Computer Hardware and Software](https://charlespetzold.com/code/)**
+- **[Operating Systems: Three Easy Pieces](https://pages.cs.wisc.edu/~remzi/OSTEP/)**
+ 
+## 4. C Programming
+
+<img width="150" alt="c_512x512" src="https://github.com/user-attachments/assets/4b52552b-d591-4bf8-9d59-64f2e86d61cc" />
+ 
+Once you understand the basics of how computers work, it's time to learn C. As you go, pay attention to pointers and pointer arithmetic, arrays, structs (including padding and alignment), memory allocation, stack versus heap, data representation, bitwise operations, and undefined behavior, since these topics are the foundation for low-level programming. Having seen some assembly already, you'll find it easier to picture what a pointer or a stack frame really is.
+
+Try to look past what your code does and ask how it actually works. Where is the data stored ? What happens in memory when a function is called ? How does the program read and change data? Thinking this way gets you far more out of C than just memorizing the syntax.
+
+- **[All Resources of C Language](https://www.c-language.org/resources)**
+- **[Beej's Guide to C Programming](https://beej.us/guide/bgc/)**
+- **[C FAQ](https://c-faq.com/)**
+- **[Dive into Systems](https://diveintosystems.org/book/)**
+- **[C Interfaces and Implementations](https://github.com/drh/cii)**
  
 ## 5. Practice Data Structures & Algorithms
  
@@ -439,6 +445,8 @@ Once you're comfortable writing programs in C, start learning data structures an
 Start with the common data structures like [arrays](https://en.wikipedia.org/wiki/Array_(data_structure)), [linked lists](https://en.wikipedia.org/wiki/Linked_list), [stacks](https://en.wikipedia.org/wiki/Stack_(abstract_data_type)), [queues](https://en.wikipedia.org/wiki/Queue_(abstract_data_type)), [hash tables](https://en.wikipedia.org/wiki/Hash_table), [trees](https://en.wikipedia.org/wiki/Binary_tree), [heaps](https://en.wikipedia.org/wiki/Heap_(data_structure)), and [graphs](https://en.wikipedia.org/wiki/Graph_(abstract_data_type)). Next to them, pick up the key algorithm ideas like [searching](https://en.wikipedia.org/wiki/Search_algorithm), [sorting](https://en.wikipedia.org/wiki/Sorting_algorithm), [recursion](https://en.wikipedia.org/wiki/Recursion_(computer_science)), [traversal techniques](https://en.wikipedia.org/wiki/Tree_traversal), and general problem-solving strategies.
 
 > DSA doesn't depend on any language, so you can learn the core ideas in whatever you like. Since this roadmap is about low-level programming, though, resources that teach it in C will usually serve you better.
+
+> Low-level work adds one more thing to keep in mind: how your data is laid out in memory. Big-O tells you how an algorithm scales, but on a real CPU, cache locality matters a lot too. A contiguous array is often much faster to traverse than a linked list, even when the textbook complexity looks the same or worse for the array.
 
 - **[MIT 6.006: Introduction to Algorithms](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/)** 
 - **[CS3 Data Structures & Algorithms](https://opendsa-server.cs.vt.edu/ODSA/Books/CS3/html/index.html)**
@@ -472,7 +480,7 @@ Pick one or two that interest you and learn them alongside C. And if you enjoy C
 
 <img width="150" alt="cpp_logo" src="https://github.com/user-attachments/assets/3ed8fce0-cc22-48ae-bde1-3d136f6f4ad1" />
 
-[C++](https://en.wikipedia.org/wiki/C%2B%2B) adds powerful abstraction tools to low-level programming while still giving you a lot of control over memory, performance, and hardware details.
+[C++](https://en.wikipedia.org/wiki/C%2B%2B) adds powerful abstraction tools like classes, templates, and RAII to low-level programming while still giving you a lot of control over memory, performance, and hardware details.
  
 > C++ keeps evolving, so many old tutorials, books, and videos teach outdated methods or older versions of the language. If you're starting today, stick to modern C++, meaning standards like C++17, C++20, and C++23, since that's how the language is actually used now.
 
@@ -486,7 +494,7 @@ Pick one or two that interest you and learn them alongside C. And if you enjoy C
 
 <img width="150" alt="rust-logo-512x512" src="https://github.com/user-attachments/assets/86e703e4-ff32-44c2-9e65-4dc8af1093c7" />
 
-[Rust](https://en.wikipedia.org/wiki/Rust_(programming_language)) is built for systems programming and comes with strong compile-time guarantees for memory safety and concurrency.
+[Rust](https://en.wikipedia.org/wiki/Rust_(programming_language)) is built for systems programming. Its ownership and borrowing rules are checked at compile time, which gives you memory safety and data-race freedom without a garbage collector.
 
 - **[The Rust Programming Language](https://doc.rust-lang.org/book/)**
 - **[Rustlings](https://github.com/rust-lang/rustlings)**
@@ -505,7 +513,7 @@ Pick one or two that interest you and learn them alongside C. And if you enjoy C
 
 <img width="150" alt="zig-programming-language-icon" src="https://github.com/user-attachments/assets/fa4257a9-5645-48a2-ae13-6657c2710d0a" />
 
-[Zig](https://en.wikipedia.org/wiki/Zig_(programming_language)) puts explicit control, predictable behavior, and easy interoperability with C first, and takes a modern approach to systems programming.
+[Zig](https://en.wikipedia.org/wiki/Zig_(programming_language)) goes for explicit control and predictable behavior, with no hidden control flow and no hidden allocations. It also has compile-time code execution (`comptime`) and can build and link C code directly, so it works well alongside existing C projects.
 
 - **[Zig Learn](https://ziglearn.org/)**
 - **[Zig Language Reference](https://ziglang.org/documentation/master/)**
@@ -517,7 +525,7 @@ Pick one or two that interest you and learn them alongside C. And if you enjoy C
 
 <img width="150" alt="odin" src="https://github.com/user-attachments/assets/0d3d6347-2da6-4545-9a8c-391259d70d93" />
 
-Odin is a systems programming language built around simplicity, explicitness, performance, and practical software development.
+Odin is a systems programming language built around simplicity and data-oriented design. It uses manual memory management with explicit allocators, and it ships with built-in vector and matrix types, which makes it popular for games and graphics work.
 
 - **[Odin Overview](https://odin-lang.org/docs/overview/)**
 - **[Odin Demo Program](https://github.com/odin-lang/Odin/blob/master/examples/demo/demo.odin)**
@@ -551,7 +559,7 @@ The point of learning extra languages is to deepen your understanding of program
  
 ## 8. Pick a Specialized Field
  
-By now you should have a solid base in computer fundamentals, C, assembly, data structures and algorithms, and some hands-on project experience. From here you can start exploring the specific area of low-level programming that interests you most.
+By now you should have a solid base in electronics, assembly, computer fundamentals, C, data structures and algorithms, and some hands-on project experience. From here you can start exploring the specific area of low-level programming that interests you most.
 
 There's no rush to specialize. Many beginners jump into advanced topics too early, before the fundamentals are solid, and end up struggling. A strong base makes the specialized topics much easier later on.
  
