@@ -430,7 +430,7 @@ RISC-V is a newer, open instruction set that anyone can use for free. Its design
 
 > You don't need a RISC-V board to start. Simulators and emulators like QEMU let you run RISC-V programs on your normal computer.
 
-- **[Riscv Learn](https://github.com/riscv/learn)**
+- **[RISCV Learn](https://github.com/riscv/learn)**
  
 ## 5. Practice Data Structures & Algorithms
  
